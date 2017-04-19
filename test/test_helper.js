@@ -11,8 +11,15 @@ before(() => {
 });
 
 beforeEach((done /* calling this tells mocha to continue */) => {
-   mongoose.connection.collections.users.drop(() => {
-       // .drop callback
-       done();
+    // Mongo normalises names to lowercase - blogPosts -> blogposts
+
+    // Instead of dropping all collections, could drop DB - mongoose.connection.db.dropDatabase();
+    const { users, comments, blogposts } = mongoose.connection.collections;
+    users.drop(() => {
+       comments.drop(() => {
+           blogposts.drop(() => {
+               done();
+           });
+       });
    });
 });
